@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from aegis.core.config import settings
@@ -9,27 +10,9 @@ from aegis.api.moderation import router as moderation_router
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(
-    title=settings.PROJECT_NAME,
-    version=settings.VERSION,
-    description="AegisMesh: Zero-Knowledge Autonomous Threat Escrow & Incident Triaging Engine.",
-    docs_url="/docs",
-    redoc_url="/redoc"
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-app.include_router(escrow_router, prefix=settings.API_V1_PREFIX)
-app.include_router(moderation_router, prefix=settings.API_V1_PREFIX)
-
-@app.on_event("startup")
-def seed_initial_officer():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Seed initial moderator account for evaluators
     db = SessionLocal()
     try:
         if not db.query(ModeratorOfficer).filter(ModeratorOfficer.username == "gdg_moderator").first():
@@ -42,6 +25,27 @@ def seed_initial_officer():
             db.commit()
     finally:
         db.close()
+    yield
+
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    version=settings.VERSION,
+    description="AegisMesh: Zero-Knowledge Autonomous Threat Escrow & Incident Triaging Engine.",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    lifespan=lifespan
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(escrow_router, prefix=settings.API_V1_PREFIX)
+app.include_router(moderation_router, prefix=settings.API_V1_PREFIX)
 
 @app.get("/health", tags=["Infrastructure"])
 def healthcheck():
