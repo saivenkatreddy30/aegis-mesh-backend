@@ -17,7 +17,7 @@ AegisMesh introduces an **in-memory, two-pass differential redaction pipeline** 
 2. **On-Device NLP Entity Recognition:** SpaCy NER model scrubs proper names (`[REDACTED_PERSON]`), physical locations (`[REDACTED_GPE]`), and institutions (`[REDACTED_ORG]`).
 3. **Autonomous Urgency Triaging:** Incident narratives are analyzed deterministically to calculate threat severity and rank triage queues for moderators (`CRITICAL`, `ELEVATED`, `STANDARD`).
 4. **CSPRNG Case Tokens:** Cryptographically unguessable tracking codes (`AEGIS-XXXX-XXXX-XXXX-XXXX`) generated via Python's `secrets` module prevent report enumeration attacks.
-5. **Deterministic State Machine (FSM):** Enforces strict report life cycles (`SUBMITTED` ➔ `UNDER_REVIEW` ➔ `RESOLVED` / `DISMISSED`) with `HTTP 409 Conflict` guards rejecting illegal state hops[cite: 1].
+5. **Deterministic State Machine (FSM):** Enforces strict report life cycles (`SUBMITTED` ➔ `UNDER_REVIEW` ➔ `RESOLVED` / `DISMISSED`) with `HTTP 409 Conflict` guards rejecting illegal state hops.
 
 ---
 
@@ -36,15 +36,15 @@ AegisMesh introduces an **in-memory, two-pass differential redaction pipeline** 
 ### Public Whistleblower Interface (Zero-Knowledge)
 | Method | Route | Description |
 | :--- | :--- | :--- |
-| `POST` | `/api/v1/escrow/submit` | Anonymous report ingest (auto-sanitized & triaged)[cite: 1] |
-| `GET` | `/api/v1/escrow/track/{token}` | Verify report status using CSPRNG claim token[cite: 1] |
+| `POST` | `/api/v1/escrow/submit` | Anonymous report ingest (auto-sanitized & triaged) |
+| `GET` | `/api/v1/escrow/track/{token}` | Verify report status using CSPRNG claim token |
 
 ### Moderator Portal (JWT Protected)
 | Method | Route | Description |
 | :--- | :--- | :--- |
-| `POST` | `/api/v1/moderator/auth/token` | Authenticate moderator session[cite: 1] |
-| `GET` | `/api/v1/moderator/feed` | Priority-sorted feed filtered by status/category[cite: 1] |
-| `PATCH`| `/api/v1/moderator/reports/{token}/transition` | Validated FSM status transition[cite: 1] |
+| `POST` | `/api/v1/moderator/auth/token` | Authenticate moderator session |
+| `GET` | `/api/v1/moderator/feed` | Priority-sorted feed filtered by status/category |
+| `PATCH`| `/api/v1/moderator/reports/{token}/transition` | Validated FSM status transition |
 
 **Default Moderator Credentials:**
 - **Username:** `gdg_moderator`
