@@ -1,7 +1,5 @@
 # AegisMesh - Zero-Knowledge Autonomous Threat Escrow & Incident Triage Backend
 
-> Built for the Google Developer Groups (GDG) on Campus SRM Technical Recruitment 2026-27 (Backend Domain - Task 1: Whistle Drop).
-
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg?logo=fastapi)](https://fastapi.tiangolo.com)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg?logo=python)](https://python.org)
 [![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen.svg)]()
